@@ -32,8 +32,8 @@ app.use("/api/posts", postRoute);
 // .getメソッドでport3000につながっているか確認
 // root end point
 // .getはbrowserに返す
-// app.get("/", (req, res) => {
-//   res.send("hello express");
-// });
+app.get("/", (req, res) => {
+  res.send("hello express");
+});
 // .listenメソッドでサーバー立ち上げ
-app.listen(PORT, () => console.log("Start the server"));
+app.listen(PORT, () => console.log("Server is listening port 3000..."));

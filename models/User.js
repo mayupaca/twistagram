@@ -52,3 +52,7 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// 第一引数は他のファイルで使えるようにする名前
+// UserSchemaをUserという名前でexport
+module.exports = mongoose.model('User', UserSchema)
