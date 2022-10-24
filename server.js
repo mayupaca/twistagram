@@ -24,10 +24,12 @@ mongoose
 
 // middleware
 // .useメソッド
+app.use(express.json());
 // users.jsの / に /api/usersをデフォルトにした
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
+
 
 // .getメソッドでport3000につながっているか確認
 // root end point
@@ -36,4 +38,4 @@ app.get("/", (req, res) => {
   res.send("hello express");
 });
 // .listenメソッドでサーバー立ち上げ
-app.listen(PORT, () => console.log("Server is listening port 3000..."));
+app.listen(PORT, () => console.log(`Server is listening port ${PORT}...`));
