@@ -1,6 +1,7 @@
 // .Router関数
 const router = require("express").Router();
 const Post = require("../models/Post");
+const User = require("../models/User");
 
 // Create post
 router.post("/", async (req, res) => {
@@ -96,6 +97,28 @@ router.put("/:id/like", async (req, res) => {
       });
       return res.status(403).json("Unliked!");
     }
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+// --------------------------------------------------------------------------------
+// Get timeline
+router.get("/timeline/all", async (req, res) => {
+  try {
+    // ログインしているuserの情報
+    const currentUser = await User.findById(req.body.userId);
+    // ↑からとってきたUserの全部のpost情報を取得
+    const userPosts = await Post.find({ userId: currentUser._id });
+    // currentUserがフォローしているuserのpost情報をすべて取得
+    // friendPostsはcurrentUserを使っている。currentUserは非同期処理でいつデータが全部取得できるかわからない。
+    // だからpromise.allを使って、currentUserが情報を取得するまで待つ。
+    const friendPosts = await Promise.all(
+      currentUser.followings.map((friendId) => {
+        return Post.find({ userId: friendId });
+      })
+    );
+
+    return res.status(200).json(userPosts.concat(...friendPosts));
   } catch (err) {
     return res.status(500).json(err);
   }
