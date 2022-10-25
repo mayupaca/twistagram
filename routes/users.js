@@ -42,7 +42,6 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can not delete this account.");
   }
 });
-
 // --------------------------------------------------------------------------------
 // User read(.get method)
 // 特定のアカウントを見たいとき
@@ -59,6 +58,82 @@ router.get("/:id", async (req, res) => {
     res.status(200).json(other);
   } catch (err) {
     return res.status(500).json(err);
+  }
+});
+// --------------------------------------------------------------------------------
+// User follow(.put method)
+// :idはフォローしたいid
+router.put("/:id/follow", async (req, res) => {
+  // 自分自身と同じidはフォローできない
+  // req.body.userId = 自分のID, req.params.id = URLのパラメーターのid
+  if (req.body.userId !== req.params.id) {
+    try {
+      // followしたい相手を見つける
+      const user = await User.findById(req.params.id);
+      // 自分自身
+      const currentUser = await User.findById(req.body.userId);
+      // currentUserがuserをfollowしているかしていないか条件分岐
+      // 今からfollowするuserがcurrentUserをfollowerとして持っていなければ...
+      if (!user.followers.includes(req.body.userId)) {
+        // currentUserをuserにpush
+        await user.updateOne({
+          $push: {
+            followers: req.body.userId,
+          },
+        });
+        // userをcurrentUserにpush
+        await currentUser.updateOne({
+          $push: {
+            followings: req.params.id,
+          },
+        });
+        return res.status(200).json('Following!')
+      } else {
+        return res.status(403).json('You are already following this user.')
+      }
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    return res.status(500).json("You can not follow yourself.");
+  }
+});
+// --------------------------------------------------------------------------------
+// User unfollow(.put method)
+// :idはフォロー解除したいid
+router.put("/:id/unfollow", async (req, res) => {
+  // 自分自身と同じidはフォローできない
+  // req.body.userId = 自分のID, req.params.id = URLのパラメーターのid
+  if (req.body.userId !== req.params.id) {
+    try {
+      // followしたい相手を見つける
+      const user = await User.findById(req.params.id);
+      // 自分自身
+      const currentUser = await User.findById(req.body.userId);
+      // currentUserがuserをfollowしているかしていないか条件分岐
+      // unfollowしたいcurrentUserをfollowerとしていたら...
+      if (user.followers.includes(req.body.userId)) {
+        // currentUserをuserからpull
+        await user.updateOne({
+          $pull: {
+            followers: req.body.userId,
+          },
+        });
+        // userをcurrentUserからpull
+        await currentUser.updateOne({
+          $pull: {
+            followings: req.params.id,
+          },
+        });
+        return res.status(200).json('Unfollowing!')
+      } else {
+        return res.status(403).json('You are already unfollowing this user.')
+      }
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    return res.status(500).json("You can not unfollow yourself.");
   }
 });
 
