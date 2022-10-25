@@ -25,7 +25,7 @@ mongoose
 // middleware
 // .useメソッド
 app.use(express.json());
-// users.jsの / に /api/usersをデフォルトにした
+// users.jsの / に /api/usersをデフォルトにした 
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
