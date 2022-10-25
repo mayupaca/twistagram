@@ -7,7 +7,7 @@ router.post("/register", async (req, res) => {
   try {
     // Userをインスタンス化
     const newUser = await new User({
-      // req.bodyはrequestに含まれるbody要素の中のusername
+      // req.bodyはuserから送られるrequestに含まれるbody要素
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
