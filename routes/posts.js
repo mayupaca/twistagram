@@ -103,10 +103,10 @@ router.put("/:id/like", async (req, res) => {
 });
 // --------------------------------------------------------------------------------
 // Get timeline
-router.get("/timeline/all", async (req, res) => {
+router.get("/timeline/:userId", async (req, res) => {
   try {
     // ログインしているuserの情報
-    const currentUser = await User.findById(req.body.userId);
+    const currentUser = await User.findById(req.params.userId);
     // ↑からとってきたUserの全部のpost情報を取得
     const userPosts = await Post.find({ userId: currentUser._id });
     // currentUserがフォローしているuserのpost情報をすべて取得

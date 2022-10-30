@@ -55,7 +55,7 @@ router.get("/:id", async (req, res) => {
     // user._docにそれぞれの情報を取り出して一つ一つ保存(取り出し)
     const { password, updatedAt, ...other } = user._doc;
     // otherだけとってくる
-    res.status(200).json(other);
+    return res.status(200).json(other);
   } catch (err) {
     return res.status(500).json(err);
   }
