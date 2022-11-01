@@ -45,12 +45,37 @@ router.delete("/:id", async (req, res) => {
 // --------------------------------------------------------------------------------
 // User read(.get method)
 // 特定のアカウントを見たいとき
-router.get("/:id", async (req, res) => {
+// router.get("/:id", async (req, res) => {
+//   try {
+// User schema使う
+// .findById関数(userを見つける)
+// /:idで指定したdataからreq.params.idを見つけに行く
+// const user = await User.findById(req.params.id);
+// password, updateAtは見えないようにする
+// user._docにそれぞれの情報を取り出して一つ一つ保存(取り出し)
+// const { password, updatedAt, ...other } = user._doc;
+// otherだけとってくる
+//     return res.status(200).json(other);
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   }
+// });
+// --------------------------------------------------------------------------------
+// Get user information by query
+// 特定のアカウントを見たいとき
+router.get("/", async (req, res) => {
+  // .queryを使ってuserIdとusernameを取得
+  // ---/.../+++?userId=mayumuraの'mayumura'をreq.query.userIdが見てる
+  // ---/.../+++?username=mayumuraの'mayumura'をreq.query.usernameが見てる
+  // '?'以降をそれぞれの変数に格納している
+  const userId = req.query.userId;
+  const username = req.query.username;
   try {
-    // User schema使う
-    // .findById関数(userを見つける)
-    // dataからreq.params.idを見つけに行く
-    const user = await User.findById(req.params.id);
+    // userIdがあったら、そのuserIdを.findByIdで見つけてくる
+    // なかったら、usernameを使って.findOneで見つける
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
     // password, updateAtは見えないようにする
     // user._docにそれぞれの情報を取り出して一つ一つ保存(取り出し)
     const { password, updatedAt, ...other } = user._doc;
@@ -87,9 +112,9 @@ router.put("/:id/follow", async (req, res) => {
             followings: req.params.id,
           },
         });
-        return res.status(200).json('Following!')
+        return res.status(200).json("Following!");
       } else {
-        return res.status(403).json('You are already following this user.')
+        return res.status(403).json("You are already following this user.");
       }
     } catch (err) {
       return res.status(500).json(err);
@@ -125,9 +150,9 @@ router.put("/:id/unfollow", async (req, res) => {
             followings: req.params.id,
           },
         });
-        return res.status(200).json('Unfollowing!')
+        return res.status(200).json("Unfollowing!");
       } else {
-        return res.status(403).json('You are already unfollowing this user.')
+        return res.status(403).json("You are already unfollowing this user.");
       }
     } catch (err) {
       return res.status(500).json(err);

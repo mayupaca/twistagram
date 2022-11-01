@@ -102,7 +102,21 @@ router.put("/:id/like", async (req, res) => {
   }
 });
 // --------------------------------------------------------------------------------
-// Get timeline
+// Get user profile timeline
+router.get("/profile/:username", async (req, res) => {
+  try {
+    // ログインしているuserの情報
+    const user = await User.findOne({ username: req.params.username });
+    // ↑からとってきたUserの全部のpost情報を取得
+    const posts = await Post.find({ userId: user._id });
+
+    return res.status(200).json(posts);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+// --------------------------------------------------------------------------------
+// Get all timeline
 router.get("/timeline/:userId", async (req, res) => {
   try {
     // ログインしているuserの情報
