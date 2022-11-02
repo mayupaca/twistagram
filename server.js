@@ -5,9 +5,11 @@ const app = express();
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+const uploadRoute = require("./routes/upload");
 // ローカルサーバーのポート
 const PORT = 5000;
 const mongoose = require("mongoose");
+const path = require("path")
 // .config関数
 require("dotenv").config();
 
@@ -24,11 +26,13 @@ mongoose
 
 // middleware
 // .useメソッド
+app.use("/images", express.static(path.join(__dirname, "public/images")))
 app.use(express.json());
 // users.jsの / に /api/usersをデフォルトにした 
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/upload", uploadRoute);
 
 
 // .getメソッドでport3000につながっているか確認
